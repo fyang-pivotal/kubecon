@@ -1,0 +1,152 @@
+## Morning sessions
+- William Morgan Buoyant; LinkerD; session 1;
+- PayBase + LinkerD; Session 2: Risha Mars
+  - `linkerd tap`, `tcpdump`
+  - `tshark`, `tcpdump`, `lsof`, `iproute2`
+  - `kubectl port-forward -n <namespace> deploy pod <pod>`
+  - `curl -v --data linkerd=debug`
+  - kubectl top pods
+  - slides: bit.ly/bug-in-my-mesh
+- IBM App Connect; istio
+- Pinterest; Envoy;
+  - Tower; Homegrown control plane; control plane internals
+  - Extendable resource distribution system
+  - High scalability & availability
+  - Migration
+    - Production-ready review
+    - Roll out slow
+      - Iterate fast
+  - Questions Linkedin: biefy, zhimeng-shi
+- Sven Mawson; Google sidecar
+  - prohibitive per-language expense
+    - central proxy -> distributed proxy model
+    - c++; run as sidecar
+    - distributed client libraries
+  - diverge per languages
+    - rebuild, re-qualify
+  - Rejected alternative
+    - remote services, DLLs, Foreigh Function Interfaces
+  - Goal: roll out side car to millions of processes keep it up-to-date
+    - start with enabling sidecars using opt-in
+    - new languages and functionality-
+      - best customers are ones with something to gain
+    - warn ALL users beforehand; be proactive
+    - take it slow
+      - cluster by cluster opt-in
+  - Upgrades?
+    - dev/stable; weekly/monthly
+    - test against dev vs. test against stable
+    - automatic happens on restart; bound;
+    - no automatic changes allowed; get the latest when the binary is rebuild;
+  - Lessons
+    - App <-> sidecar communication; use tried-n-true tech like
+      unix-domain-socket
+    - Acceptable perf hit; continuous improvement
+    - Default behavior; avoid the unexpected; guard new functionality with
+      opt-in and opt-out
+    - Don't get fancy: no hot-restart - no more crashing than kernel; shared
+      fate b/t sidecar and app;
+  - Totally worth it
+    - security fix; roll out automatic to thousands of applications
+- Daniel Berg; Istio 1.4
+  - Istio Operator
+  - istioctl add-to-mesh
+  - features:
+    - auto mTLS configuration maps
+    - STRICT security; authn tls-check
+    - iter8: analytics-drive canary release and A/B testing
+      - build-in dashboard
+    - Istio explained
+- Alejandro@buoyant admission webhooks
+  - Slidecar proxy injection in LinkerD
+  - API requests trigger:
+    - Mutation admission and validation admission
+    - Mutating admission webhooks
+      - Inject sidecar injector
+      - Validating admission: resource quota
+    - sidecar without mem limit
+- NSM; Network service mesh; cisco + vmware;
+- Luke Kysow; Hashicorp;
+  - consul: https://github.com/hashicorp/consul
+  - inject side-car; migration from AWS to GKE
+
+## Afternoon Sessions
+- Christian Posta; solo.io
+  - challenges of options
+  - start with service mesh
+    - start at the edge
+    - data plane vs. control plane
+  - the truth of service mesh
+    - goal: "sm gives a nice API into app networking"
+    - use it in the code
+      - cannot use sidecar proxy
+      - need performance in the data plane
+    - use it as a sidecar proxy
+      - cannot modify the application
+      - watchs out for:
+        - race conditions when starting alongside app
+        - leaky abstractions
+      - example: LinkerD
+    - implement as a shared domain gateway
+      - decoupling of API
+      - istio supports both architectures
+    - implement as a central gateway
+      - just starting out
+      - challenges: noisy neighbor
+  - unified data plane API: CNCF project
+  - webassembly
+    - envoy-wasm; gloo.solo.io
+    - demo
+- Michelle Norabli; Helm; Msft;
+  - CNCF: Kubecon 2017; Austin; ServiceMesh
+  - What end users want
+    - deployment strategies: canery; blue/green
+  - SMI (servicemesh interface)
+    - spec: traffic split
+    - each spec is a CRD
+    - weight: similar to Consul; % of traffic routed to svc
+    - SMI SDK
+      - examples imported as libraries
+    - traffic policy overview
+  - terrible presentation
+- Idit Levine; solo.io; auto-pilot
+- Weaveworks [Flagger](https://github.com/weaveworks/flagger)
+  - Deployment strategies
+    - canary
+    - A/B
+    - blue/green
+    - traffic mirroring
+  - flagger makes canary deployment automatic
+    - CRD; requires promethesus; get metrics
+    - canary time and step interval; shift from primary to canary;
+    - 50% metrics of what success looks like
+  - use webhook to generate traffic, sample traffic, mirror traffic
+  - Helm charts; progressive delivery; flux;
+- Sean Suchter; Istio adoption journey; google
+  - mTLS; auto-generation and rotation of certificates
+  - rBAC ingress blocking
+  - Istio filtering
+  - redundancy: Istio supports multi-cluster; different geos;
+  - canary deployments
+  - intrusion detection
+  - Istio integration; ecosystem of different vendors enabling network-level integration; WASM multi-language code;
+  - Telemetry from Istion (mixer v2)
+- mental model of servicemesh
+  - monolith; load-balancer; scalability; database layer
+  - connect to blackbox; exchange data; 3rd party
+  - do we have already have one?
+    - managing change across the servicemesh
+    - microservice: everything you need to touch to rollout change
+  - servicemesh not service mess!
+  - three components:
+    1. control plane
+      - separate config logically; distinct config stores must be reconciled
+    1. multi-cluster
+      - scale compute; HA; distinct compute env
+      - best practice: respect namespace; same namespace with same name means
+        same service
+      - mTLS is a must because comm. happens over public internet
+  - A cluster is a context for compute
+  - Multi-mesh across multi-cluster
+    - only identity is shared; sharing trust;
+
