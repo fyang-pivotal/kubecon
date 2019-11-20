@@ -129,3 +129,17 @@
   - size vs. object count vs. version
   - `auger extract -f <dbfile> -k <key> | wc -c`
 - SIG instrumentation deepdive
+
+## Evening key notes
+- cloud-hypervisor; intel; https://github.com/intel/cloud-hypervisor
+- Open Telemetry: observability; Liz Fung
+  - New methods for cloud-native system
+  - Open census + open tracing: clarity around a common language
+  - Add instrumentations regardless of visualization
+  - Accomplishments
+    - feature parity: migration paths from past solutions
+    - Robust language support
+  - demo of `.opentelemetry.io/otel/ap/trace`
+  - Jaeger UI
+    - context proporgration; tracer
+    - pass in request context: ctx
