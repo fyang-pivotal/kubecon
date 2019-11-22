@@ -1,0 +1,79 @@
+## morning session: networking deep dive
+- CNI allows pods to communicate to each other
+  - iptables, cloud network, etc
+- namespace
+  - `NetworkPolicy` specify ingress-deny-all
+  - matchLabels key: val store
+  - reference a subset of the namespace
+- endpoints
+  - two set of abstractions
+    - list of all ips
+    - pod healthcheck (iff ready available in endpoints)
+  - two lists in endpoints (ready and not ready)
+- service
+  - feeds into endpoints via a loadbalancer 
+  - 4 different kinds of services
+    - typeExternal
+    - clusterIP
+      - internal loadBalancer
+    - nodePort
+      - exposes
+    - loadBalancer
+- podReadyState
+  - at the networking layer instead of the local layer
+- `kubeproxy`
+- DNS controller
+- Ingress define http backend and tied them to `svc`
+- roadmap
+  - ingress GA
+  - multicluster networking
+- deepdive
+  - endpoint slice
+    - for resolving large clusters with many endpoints
+    - endpoint is 1:1 to service. endpoint slice requires label mapping
+    - ready boolean
+    - migration of Endpoint to Endpoint slices for API resources
+  - ingress
+
+## afternoon session: clusterAPI deep dive
+- what is clusterAPI? a declarative manifest to manage k8s clusters
+  - ecosystem is fragmented
+  - clusterAPI used to build on top
+- visualization
+  - use k8s cluster to run k8s cluster
+  - given a declarative spec for k8s cluster
+  - manage k8s on any cloud
+    - vSphere, GCP, Azure
+- k8s API on top of boostraping, including `kubeadm`, `talos`
+- build a framework or foundation
+  - support advance use cases
+- version `v1alpha2`
+  - infra CRDs
+  - management cluster (control plane)
+  - target cluster (lifecycle of cluster to be managed)
+  - cluster CRD
+    - kind: `Cluster`, spec `infrastructureRef`
+    - `kind: AWSCluster`
+  - machine CRD
+    - kind: `Machine`, bootstrap:
+    - kind: `AWSMachine`
+    - `e3` instance type
+  - boostrapConfig CRD
+    - kubeadmConfig
+    - used by the bootstrap provider to generate metadata, cluster config
+    - configure the control plane of your target cluster
+  - `MachineDeployment`
+    - use it to manage worker machines for now; control plane machine coming
+      soon
+  - Architecture
+- roadmap
+  - clusterctl v2
+  - control plane management
+  - machinepool
+  - failure domain for spreading machines across AZs
+- planned features
+  - node remediation
+  - testing framework (e2e tests)
+  - validation webhooks (configuration errors, force immutability)
+  - load balancer providers
+
